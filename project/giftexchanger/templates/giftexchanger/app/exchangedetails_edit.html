@@ -1,0 +1,14 @@
+{% extends 'giftexchanger/base.html' %}
+
+{% block body_content %}
+	<h2>{{ exchange.title }}</h2>
+	<p>{{ exchange.description }}</p>
+	<p>{{ exchange.schedule_day }}</p>
+
+	<h3>Your details</h3>
+	<form method="POST" action="">{% csrf_token %}
+		{{ form.as_ul|safe }}
+	<input type="submit" value="submit"/>
+	</form>
+
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends 'giftexchanger/base.html' %}
+
+{% block body_content %}
+	<h2>{{ exchange.title }}</h2>
+	<p>{{ exchange.description }}</p>
+	<p>{{ exchange.schedule_day }}</p>
+
+	<table border=1 cellpadding="5" cellspacing="0">
+		<tr><th colspan="100%">Assignments</th></tr>
+		<tr>
+			<th>Giver</th>
+			<th>Recipient</th>
+			<th>Recipient likes</th>
+			<th>Recipient dislikes</th>
+			<th>Recipient allergies</th>
+		</tr>
+		{% for assg in assignments %}
+			<tr>
+				<td>{{assg.giver.name}}</td>
+				<td>{{assg.receiver.name}}</td>
+				{% with assg.get_receiver_details as recv %}
+					<td>{{recv.likes}}</td>
+					<td>{{recv.dislikes}}</td>
+					<td>{{recv.allergies}}</td>
+				{% endwith %}
+			</tr>
+		{% endfor %}
+	</table>
+
+
+{% endblock %}

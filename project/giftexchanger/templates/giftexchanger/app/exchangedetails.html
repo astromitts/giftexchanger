@@ -1,0 +1,24 @@
+{% extends 'giftexchanger/base.html' %}
+
+{% block body_content %}
+	<h2>{{ exchange.title }}</h2>
+	<p>{{ exchange.description }}</p>
+	<p>{{ exchange.schedule_day }}</p>
+
+	{% if is_exchange_admin %}
+		<p><a href="{% url 'exchange_admin' exc_id=exchange.id %}">exchange admin</a></p>
+	{% endif %}
+
+	<h3>Your details</h3>
+	<p><a href="{% url 'exchange_details_edit'  exc_id=exchange.id %}">edit</a></p>
+	<p><b>Likes:</b> {{ user_details.likes }}</p>
+	<p><b>Dislikes:</b> {{ user_details.dislikes }}</p>
+	<p><b>Allergies:</b> {{ user_details.allergies }}</p>
+
+	<h3>Your assignment</h3>
+	<p><b>{{assignment.name}}</b>
+	<p><b>Likes:</b> {{ assignment_details.likes }}</p>
+	<p><b>Dislikes:</b> {{ assignment_details.dislikes }}</p>
+	<p><b>Allergies:</b> {{ assignment_details.allergies }}</p>
+
+{% endblock %}
