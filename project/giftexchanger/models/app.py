@@ -2,12 +2,32 @@ from django.db import models
 from django.contrib.auth.models import User, Group
 from django.db.models.signals import post_save
 
+from giftexchanger.utils.assignments import ExchangeAssigner
+
 
 class GiftExchange(models.Model):
     title = models.CharField(max_length=250)
     description = models.CharField(max_length=600)
     spending_max = models.IntegerField(default=25)
     schedule_day = models.DateField()
+
+    def generate_assignments(self, max_tries=6):
+        assigner = ExchangeAssigner(self)
+        assigner.make_assignments(max_tries)
+        assignment_objects = []
+        for giver_id, receiver_id in assigner.assignment_map.items():
+            gift_assignment = GiftAssignment(
+                exchange=self,
+                giver_id=giver_id,
+                receiver_id=receiver_id
+            )
+            gift_assignment.save()
+            assignment_objects.append(gift_assignment)
+        return assignment_objects
+
+    @property
+    def participants(self):
+        return [uds.user for uds in self.userdetails_set.all()]
 
     def __str__(self):
         return self.title

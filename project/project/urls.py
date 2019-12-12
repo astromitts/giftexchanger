@@ -15,12 +15,14 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from giftexchanger import views
+from giftexchanger.views import app, session
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', views.dashboard),
-    path('exchangedetails/<int:exc_id>/', views.exchange_details, name='exchange_details'),
-    path('exchangedetails/<int:exc_id>/edit/', views.exchange_details_edit, name='exchange_details_edit'),
-    path('exchange/<int:exc_id>/admin/', views.exchange_admin, name='exchange_admin'),
+    path('', app.user_dashboard, name='user_dashboard'),
+    path('login/', session.login_handler, name='login_handler'),
+    path('exchangedetails/<int:exc_id>/', app.exchange_details, name='exchange_details'),
+    path('exchangedetails/<int:exc_id>/edit/', app.exchange_details_edit, name='exchange_details_edit'),
+    path('exchange/<int:exc_id>/admin/', app.exchange_admin, name='exchange_admin'),
+    path('exchange/<int:exc_id>/admin/edit/', app.exchange_admin_edit, name='exchange_admin_edit'),
 ]

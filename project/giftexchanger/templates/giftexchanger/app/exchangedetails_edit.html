@@ -7,8 +7,19 @@
 
 	<h3>Your details</h3>
 	<form method="POST" action="">{% csrf_token %}
-		{{ form.as_ul|safe }}
-	<input type="submit" value="submit"/>
+	  <div class="form-group">
+	    <label for="id_likes">You like: </label>
+	    <input type="text" name="likes" class="form-control" id="id_likes" value="{{form.likes.value}}">
+	  </div>
+	  <div class="form-group">
+	    <label for="id_dislikes">You dislike: </label>
+	    <input type="text" name="dislikes" class="form-control" id="id_dislikes" value="{{form.dislikes.value}}">
+	  </div>
+	  <div class="form-group">
+	    <label for="id_allergies">You have allergies to: </label>
+	    <input type="text" name="allergies" class="form-control" id="id_allergies" value="{{form.allergies.value}}">
+	  </div>
+	<input type="submit" class="btn btn-primary" value="submit"/>
 	</form>
 
 {% endblock %}

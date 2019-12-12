@@ -3,15 +3,19 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseForbidden
 from django.template import loader
 from django.shortcuts import redirect
+from django.urls import reverse
 
-from giftexchanger.models import UserProfile, GiftExchange, UserDetails
-from giftexchanger.forms import EditUserDetailsForExchange
+from giftexchanger.models.app import UserProfile, GiftExchange, UserDetails
+from giftexchanger.forms.exchange_details import (
+    EditUserDetailsForExchange,
+    AdminEditExchangeInfo
+)
 
 
 @login_required(login_url='login/')
-def dashboard(request):
+def user_dashboard(request):
     user = UserProfile.objects.get(pk=60)  # it me
-    template = loader.get_template('giftexchanger/app/dashboard.html')
+    template = loader.get_template('giftexchanger/app/user_dashboard.html')
     context = {
         'user': user,
         'exchanges': user.get_exchanges()
@@ -76,4 +80,28 @@ def exchange_admin(request, exc_id):
         'exchange': exchange,
         'assignments': exchange.giftassignment_set.all()
     }
+    return HttpResponse(template.render(context, request))
+
+
+@login_required(login_url='login/')
+def exchange_admin_edit(request, exc_id):
+    user = UserProfile.objects.get(pk=60)  # it me
+    exchange = GiftExchange.objects.get(pk=exc_id)
+    is_exchange_admin = exchange in user.admin_of.all()
+    if not is_exchange_admin:
+        return HttpResponseForbidden("Forbidden")
+    template = loader.get_template('giftexchanger/app/exchangeadmin_edit.html')
+
+    if request.POST:
+        form = AdminEditExchangeInfo(request.POST)
+        if form.is_valid:
+            exchange.title = request.POST['title']
+            exchange.description = request.POST['description']
+            exchange.spending_max = request.POST['spending_max']
+            exchange.schedule_day = request.POST['schedule_day']
+            exchange.save()
+            return redirect(reverse('exchange_admin', kwargs={'exc_id': exchange.pk}))
+    else:
+        form = AdminEditExchangeInfo(instance=exchange)
+    context = {'form': form}
     return HttpResponse(template.render(context, request))

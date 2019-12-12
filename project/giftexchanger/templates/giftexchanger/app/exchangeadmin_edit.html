@@ -1,0 +1,27 @@
+{% extends 'giftexchanger/base.html' %}
+
+{% block body_content %}
+	<h3>Update Gift Exchange</h3>
+	<form method="POST" action="">{% csrf_token %}
+	  <div class="form-group">
+	    <label for="id_title">Title: </label>
+	    <input type="text" name="title" class="form-control" id="id_title" value="{{form.title.value}}">
+	  </div>
+	  <div class="form-group">
+	    <label for="id_description">Description: </label>
+	    <input type="text" name="description" class="form-control" id="id_description" value="{{form.description.value}}">
+	  </div>
+	  <div class="form-group">
+	    <label for="id_spending_max">Spending max: </label>
+	    <input type="text" name="spending_max" class="form-control" id="id_spending_max" value="{{form.spending_max.value}}">
+	  </div>
+	  <div class="form-group row">
+		  <label for="id_schedule_day" class="col-2 col-form-label">Day of gift exchange:</label>
+		  <div class="col-10">
+		    <input class="form-control" type="date" name="schedule_day" value="{{form.schedule_day.value|date:'c'}}" id="id_schedule_day">
+		  </div>
+		</div>
+	<input type="submit" class="btn btn-primary" value="submit"/>
+	</form>
+
+{% endblock %}

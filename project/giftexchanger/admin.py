@@ -1,5 +1,5 @@
 from django.contrib import admin
-from giftexchanger.models import GiftExchange, UserProfile, UserDetails
+from giftexchanger.models.app import GiftExchange, UserProfile, UserDetails
 # Register your models here.
 
 admin.site.register(GiftExchange)

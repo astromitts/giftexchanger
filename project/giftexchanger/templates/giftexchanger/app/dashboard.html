@@ -1,8 +1,0 @@
-{% extends 'giftexchanger/base.html' %}
-
-{% block body_content %}
-	<h2>Upcoming</h2>
-	{% for exchange in exchanges %}
-	<a href="{% url 'exchange_details' exc_id=exchange.id %}">{{ exchange.title }}</a><br />
-	{% endfor %}
-{% endblock %}

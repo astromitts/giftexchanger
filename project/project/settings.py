@@ -101,6 +101,11 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
+# Static settings
+STATIC_URL = '/giftexchanger/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'giftexchanger/static')
+
+
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
 
