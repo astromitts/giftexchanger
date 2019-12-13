@@ -5,7 +5,7 @@ from django.forms import (
     DateField,
     HiddenInput
 )
-from giftexchanger.models.app import UserDetails, GiftExchange
+from giftexchanger.models import UserDetails, GiftExchange
 
 
 class EditUserDetailsForExchange(ModelForm):

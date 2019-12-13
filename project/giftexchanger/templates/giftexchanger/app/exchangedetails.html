@@ -30,42 +30,46 @@
 	</table>
 
 	<h3>Your assignment</h3>
-	<table class="table table-bordered">
-		<tbody>
-			<tr>
-				<th colspan="100%">{{assignment.name}}</th>
-			</tr>
-			<tr>
-				<td>Likes:</td>
-				<td>
-					{% if assignment_details.likes %}
-						{{ assignment_details.likes }}
-					{% else %}
-						Nothing, apparently. Good luck!
-					{% endif %}
-				</td>
-			</tr>
-			<tr>
-				<td>Dislikes:</td>
-				<td>
-					{% if assignment_details.dislikes %}
-						{{ assignment_details.dislikes }}
-					{% else %}
-						Nothing, apparently. Good luck!
-					{% endif %}
-				</td>
-			</tr>
-			<tr>
-				<td>Allergies:</td>
-				<td>
-					{% if assignment_details.allergies %}
-						{{ assignment_details.allergies }}
-					{% else %}
-						Nothing. That's great!
-					{% endif %}
-				</td>
-			</tr>
-		</tbody>
-	</table>
+	{% if exchange.status == 'assigned' %}
+		<table class="table table-bordered">
+			<tbody>
+				<tr>
+					<th colspan="100%">{{assignment.name}}</th>
+				</tr>
+				<tr>
+					<td>Likes:</td>
+					<td>
+						{% if assignment_details.likes %}
+							{{ assignment_details.likes }}
+						{% else %}
+							Nothing, apparently. Good luck!
+						{% endif %}
+					</td>
+				</tr>
+				<tr>
+					<td>Dislikes:</td>
+					<td>
+						{% if assignment_details.dislikes %}
+							{{ assignment_details.dislikes }}
+						{% else %}
+							Nothing, apparently. Good luck!
+						{% endif %}
+					</td>
+				</tr>
+				<tr>
+					<td>Allergies:</td>
+					<td>
+						{% if assignment_details.allergies %}
+							{{ assignment_details.allergies }}
+						{% else %}
+							Nothing. That's great!
+						{% endif %}
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	{% else %}
+	<div>Assignments have not been given yet for this exchange, check back later!</div>
+	{% endif %}
 
 {% endblock %}

@@ -1,5 +1,5 @@
 from django.test import TestCase
-from giftexchanger.models.app import GiftExchange, UserProfile
+from giftexchanger.models import GiftExchange, UserProfile
 from datetime import date, timedelta
 
 

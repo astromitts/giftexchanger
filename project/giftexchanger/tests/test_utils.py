@@ -10,7 +10,5 @@ class TestAssignmentUtil(GiftExchangeTestCase):
             self.assertIn(user, test_participants)
             self.assertNotIn(user, test_non_participants)
 
-        assignments = self.upcoming_exchange_main.generate_assignments(max_tries=None)
+        assignments = self.upcoming_exchange_main.generate_assignments(max_tries=None, debug=True)
         self.assertEqual(len(assignments), len(test_participants))
-
-        self.fail("not implemented")

@@ -5,7 +5,7 @@ from django.template import loader
 from django.shortcuts import redirect
 from django.urls import reverse
 
-from giftexchanger.models.app import UserProfile, GiftExchange, UserDetails
+from giftexchanger.models import UserProfile, GiftExchange, UserDetails
 from giftexchanger.forms.exchange_details import (
     EditUserDetailsForExchange,
     AdminEditExchangeInfo
@@ -42,7 +42,8 @@ def exchange_details(request, exc_id):
         'exchange': exchange,
         'user_details': user_details,
         'assignment': assignment,
-        'assignment_details': assignment_details
+        'assignment_details': assignment_details,
+        'back_url': reverse('user_dashboard')
     }
     return HttpResponse(template.render(context, request))
 
@@ -64,7 +65,7 @@ def exchange_details_edit(request, exc_id):
             return redirect('/exchangedetails/{}/'.format(exchange.pk))
     else:
         form = EditUserDetailsForExchange(instance=user_details)
-    context = {'form': form}
+    context = {'form': form, 'back_url': reverse('exchange_admin', kwargs={'exc_id': exchange.pk})}
     return HttpResponse(template.render(context, request))
 
 
@@ -78,7 +79,8 @@ def exchange_admin(request, exc_id):
         return HttpResponseForbidden("Forbidden")
     context = {
         'exchange': exchange,
-        'assignments': exchange.giftassignment_set.all()
+        'assignments': exchange.giftassignment_set.all(),
+        'back_url': reverse('exchange_details', kwargs={'exc_id': exchange.pk})
     }
     return HttpResponse(template.render(context, request))
 
@@ -103,5 +105,31 @@ def exchange_admin_edit(request, exc_id):
             return redirect(reverse('exchange_admin', kwargs={'exc_id': exchange.pk}))
     else:
         form = AdminEditExchangeInfo(instance=exchange)
-    context = {'form': form}
+    context = {'form': form, 'back_url': reverse('exchange_details', kwargs={'exc_id': exchange.pk})}
+    return HttpResponse(template.render(context, request))
+
+
+@login_required(login_url='login/')
+def exchange_admin_create(request):
+    user = UserProfile.objects.get(pk=60)  # it me
+    template = loader.get_template('giftexchanger/app/exchangeadmin_edit.html')
+
+    if request.POST:
+        form = AdminEditExchangeInfo(request.POST)
+        if form.is_valid:
+            exchange = GiftExchange()
+            exchange.title = request.POST['title']
+            exchange.description = request.POST['description']
+            exchange.spending_max = request.POST['spending_max']
+            exchange.schedule_day = request.POST['schedule_day']
+            exchange.save()
+            user.admin_of.add(exchange)
+            user.save()
+            new_user_details = UserDetails(user=user, exchange=exchange, likes="", dislikes="", allergies="")
+            new_user_details.save()
+            return redirect(reverse('exchange_admin', kwargs={'exc_id': exchange.pk}))
+    else:
+        new_exchange = GiftExchange()
+        form = AdminEditExchangeInfo(instance=new_exchange)
+    context = {'form': form, 'back_url': reverse('user_dashboard')}
     return HttpResponse(template.render(context, request))

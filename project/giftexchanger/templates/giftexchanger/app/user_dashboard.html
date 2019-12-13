@@ -8,6 +8,16 @@
      	</div>
     </div>
     <div class="row">
+    	<div class="col-lg-4 col-sm-6 mb-4">
+    		<div class="card h-100">
+	        <a href="{% url 'exchange_admin_create' %}"><img class="card-img-top" src="http://placehold.it/700x400" alt=""></a>
+	        <div class="card-body">
+	          <h4 class="card-title">
+	            <a href="{% url 'exchange_admin_create' %}">+ Create new</a>
+	          </h4>
+	        </div>
+	      </div>
+		</div>
 		{% for exchange in exchanges %}
 	    	<div class="col-lg-4 col-sm-6 mb-4">
 	    		<div class="card h-100">

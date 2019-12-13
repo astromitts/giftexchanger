@@ -10,10 +10,37 @@ class GiftExchange(models.Model):
     description = models.CharField(max_length=600)
     spending_max = models.IntegerField(default=25)
     schedule_day = models.DateField()
+    status = models.CharField(
+        max_length=20,
+        choices=(
+            ('pending', 'pending'),  # assignments have not been set, so new users can be added
+            ('assigned', 'assigned'),  # assignments have been set, so no new users
+            ('closed', 'closed'),  # exchange is over, so nothing new allowed
+        ),
+        default='pending'
+    )
 
-    def generate_assignments(self, max_tries=6):
+    @property
+    def status_desc(self):
+        status_map = {
+            'pending': """
+                This gift exchange is upcoming but assignments have not been set for this exchange. 
+                You can still add new users and users can make suggestions for each other.
+            """,
+            'assigned': """
+                This gift exchange is upcoming and assignments have been set. 
+                You cannot add any more users but users can make suggestions for each other.
+            """,
+            'closed': """
+                This gift exchange is closed, nothing can be changed.
+            """,
+        }
+        return self._status_desc
+    
+
+    def generate_assignments(self, max_tries=6, debug=False):
         assigner = ExchangeAssigner(self)
-        assigner.make_assignments(max_tries)
+        assigner.make_assignments(max_tries, debug)
         assignment_objects = []
         for giver_id, receiver_id in assigner.assignment_map.items():
             gift_assignment = GiftAssignment(
@@ -27,7 +54,7 @@ class GiftExchange(models.Model):
 
     @property
     def participants(self):
-        return [uds.user for uds in self.userdetails_set.all()]
+        return [uds.user for uds in self.userdetails_set.all().order_by('?')]
 
     def __str__(self):
         return self.title
