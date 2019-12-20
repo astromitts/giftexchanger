@@ -10,7 +10,7 @@ from giftexchanger.forms.session import LoginUserForm
 
 
 def login_handler(request):
-    template = loader.get_template('giftexchanger/login.html')
+    template = loader.get_template('giftexchanger/user/login.html')
     if request.user.is_authenticated:
         return redirect(reverse('user_dashboard'))
     if request.POST:

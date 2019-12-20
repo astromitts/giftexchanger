@@ -15,7 +15,7 @@ from giftexchanger.forms.exchange_details import (
 @login_required(login_url='login/')
 def user_dashboard(request):
     user = UserProfile.objects.get(pk=60)  # it me
-    template = loader.get_template('giftexchanger/app/user_dashboard.html')
+    template = loader.get_template('giftexchanger/dashboard.html')
     context = {
         'user': user,
         'exchanges': user.get_exchanges()
@@ -26,7 +26,7 @@ def user_dashboard(request):
 @login_required(login_url='login/')
 def exchange_details(request, exc_id):
     user = UserProfile.objects.get(pk=60)  # it me
-    template = loader.get_template('giftexchanger/app/exchangedetails.html')
+    template = loader.get_template('giftexchanger/exchange_details/details.html')
     exchange = GiftExchange.objects.get(pk=exc_id)
     user_details = UserDetails.objects.get(user=user, exchange=exchange)
     assignment = user.get_assignment(exchange)
@@ -43,7 +43,10 @@ def exchange_details(request, exc_id):
         'user_details': user_details,
         'assignment': assignment,
         'assignment_details': assignment_details,
-        'back_url': reverse('user_dashboard')
+        'breadcrumbs': [
+            {'text': 'dashboard', 'url': reverse('user_dashboard')},
+            {'text': exchange.title, 'url': None},
+        ],
     }
     return HttpResponse(template.render(context, request))
 
@@ -51,7 +54,7 @@ def exchange_details(request, exc_id):
 @login_required(login_url='login/')
 def exchange_details_edit(request, exc_id):
     user = UserProfile.objects.get(pk=60)  # it me
-    template = loader.get_template('giftexchanger/app/exchangedetails_edit.html')
+    template = loader.get_template('giftexchanger/exchange_details/edit.html')
     exchange = GiftExchange.objects.get(pk=exc_id)
     user_details = UserDetails.objects.get(user=user, exchange=exchange)
 
@@ -65,71 +68,13 @@ def exchange_details_edit(request, exc_id):
             return redirect('/exchangedetails/{}/'.format(exchange.pk))
     else:
         form = EditUserDetailsForExchange(instance=user_details)
-    context = {'form': form, 'back_url': reverse('exchange_admin', kwargs={'exc_id': exchange.pk})}
-    return HttpResponse(template.render(context, request))
-
-
-@login_required(login_url='login/')
-def exchange_admin(request, exc_id):
-    user = UserProfile.objects.get(pk=60)  # it me
-    template = loader.get_template('giftexchanger/app/exchangeadmin.html')
-    exchange = GiftExchange.objects.get(pk=exc_id)
-    is_exchange_admin = exchange in user.admin_of.all()
-    if not is_exchange_admin:
-        return HttpResponseForbidden("Forbidden")
     context = {
-        'exchange': exchange,
-        'assignments': exchange.giftassignment_set.all(),
-        'back_url': reverse('exchange_details', kwargs={'exc_id': exchange.pk})
+        'form': form, 
+        'breadcrumbs': [
+            {'text': 'dashboard', 'url': reverse('user_dashboard')},
+            {'text': exchange.title, 'url': reverse('exchange_details', kwargs={'exc_id': exchange.pk})},
+            {'text': 'Edit', 'url': None}
+        ],
     }
     return HttpResponse(template.render(context, request))
 
-
-@login_required(login_url='login/')
-def exchange_admin_edit(request, exc_id):
-    user = UserProfile.objects.get(pk=60)  # it me
-    exchange = GiftExchange.objects.get(pk=exc_id)
-    is_exchange_admin = exchange in user.admin_of.all()
-    if not is_exchange_admin:
-        return HttpResponseForbidden("Forbidden")
-    template = loader.get_template('giftexchanger/app/exchangeadmin_edit.html')
-
-    if request.POST:
-        form = AdminEditExchangeInfo(request.POST)
-        if form.is_valid:
-            exchange.title = request.POST['title']
-            exchange.description = request.POST['description']
-            exchange.spending_max = request.POST['spending_max']
-            exchange.schedule_day = request.POST['schedule_day']
-            exchange.save()
-            return redirect(reverse('exchange_admin', kwargs={'exc_id': exchange.pk}))
-    else:
-        form = AdminEditExchangeInfo(instance=exchange)
-    context = {'form': form, 'back_url': reverse('exchange_details', kwargs={'exc_id': exchange.pk})}
-    return HttpResponse(template.render(context, request))
-
-
-@login_required(login_url='login/')
-def exchange_admin_create(request):
-    user = UserProfile.objects.get(pk=60)  # it me
-    template = loader.get_template('giftexchanger/app/exchangeadmin_edit.html')
-
-    if request.POST:
-        form = AdminEditExchangeInfo(request.POST)
-        if form.is_valid:
-            exchange = GiftExchange()
-            exchange.title = request.POST['title']
-            exchange.description = request.POST['description']
-            exchange.spending_max = request.POST['spending_max']
-            exchange.schedule_day = request.POST['schedule_day']
-            exchange.save()
-            user.admin_of.add(exchange)
-            user.save()
-            new_user_details = UserDetails(user=user, exchange=exchange, likes="", dislikes="", allergies="")
-            new_user_details.save()
-            return redirect(reverse('exchange_admin', kwargs={'exc_id': exchange.pk}))
-    else:
-        new_exchange = GiftExchange()
-        form = AdminEditExchangeInfo(instance=new_exchange)
-    context = {'form': form, 'back_url': reverse('user_dashboard')}
-    return HttpResponse(template.render(context, request))

@@ -15,15 +15,16 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from giftexchanger.views import app, session
+from giftexchanger.views import app, session, exchange_admin
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', app.user_dashboard, name='user_dashboard'),
     path('login/', session.login_handler, name='login_handler'),
-    path('exchangedetails/<int:exc_id>/', app.exchange_details, name='exchange_details'),
-    path('exchangedetails/<int:exc_id>/edit/', app.exchange_details_edit, name='exchange_details_edit'),
-    path('exchange/create/', app.exchange_admin_create, name='exchange_admin_create'),
-    path('exchange/<int:exc_id>/admin/', app.exchange_admin, name='exchange_admin'),
-    path('exchange/<int:exc_id>/admin/edit/', app.exchange_admin_edit, name='exchange_admin_edit'),
+    path('exchange/<int:exc_id>/', app.exchange_details, name='exchange_details'),
+    path('exchange/<int:exc_id>/edit/', app.exchange_details_edit, name='exchange_details_edit'),
+    path('exchange/create/', exchange_admin.exchange_admin_create, name='exchange_admin_create'),
+    path('exchange/<int:exc_id>/admin/', exchange_admin.exchange_admin, name='exchange_admin'),
+    path('exchange/<int:exc_id>/admin/edit/', exchange_admin.exchange_admin_edit, name='exchange_admin_edit'),
+    path('exchange/<int:exc_id>/admin/addusers/', exchange_admin.exchange_admin_add_users, name='exchange_admin_add_users'),
 ]

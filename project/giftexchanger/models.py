@@ -56,6 +56,10 @@ class GiftExchange(models.Model):
     def participants(self):
         return [uds.user for uds in self.userdetails_set.all().order_by('?')]
 
+    def get_available_users(self):
+        import pdb
+        pdb.set_trace()
+
     def __str__(self):
         return self.title
 

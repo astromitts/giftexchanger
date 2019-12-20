@@ -1,0 +1,20 @@
+{% extends 'giftexchanger/base.html' %}
+
+{% block body_content %}
+
+    <div class="row">
+    	<div class="col-md-8">
+			<h2>{{ exchange.title }} - {{ exchange.schedule_day }}</h2>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col">
+			<blockquote class="blockquote">{{ exchange.description }}</blockquote>
+		</div>
+	</div>
+	<div class="row">
+		{% for user in available_users %}
+			{{user.first_name }} {{ user.last_name }} ({{user.email}})<br>
+		{% endfor %}
+	</div>
+{% endblock %}
